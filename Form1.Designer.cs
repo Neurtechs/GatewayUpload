@@ -49,14 +49,15 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnReturn = new System.Windows.Forms.Button();
             this.lblVersion = new DevExpress.XtraEditors.LabelControl();
+            this.btnClear = new System.Windows.Forms.Button();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnSetup
             // 
-            this.btnSetup.Location = new System.Drawing.Point(59, 31);
+            this.btnSetup.Location = new System.Drawing.Point(1430, 329);
             this.btnSetup.Name = "btnSetup";
-            this.btnSetup.Size = new System.Drawing.Size(124, 39);
+            this.btnSetup.Size = new System.Drawing.Size(155, 50);
             this.btnSetup.TabIndex = 0;
             this.btnSetup.Text = "Setup";
             this.btnSetup.UseVisualStyleBackColor = true;
@@ -64,7 +65,7 @@
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(70, 1111);
+            this.btnStart.Location = new System.Drawing.Point(1147, 455);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(192, 52);
             this.btnStart.TabIndex = 1;
@@ -76,9 +77,9 @@
             // 
             this.listBox1.FormattingEnabled = true;
             this.listBox1.ItemHeight = 25;
-            this.listBox1.Location = new System.Drawing.Point(127, 110);
+            this.listBox1.Location = new System.Drawing.Point(55, 30);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(1274, 929);
+            this.listBox1.Size = new System.Drawing.Size(1000, 1154);
             this.listBox1.TabIndex = 2;
             // 
             // timerRead
@@ -87,7 +88,7 @@
             // 
             // buttonStop
             // 
-            this.buttonStop.Location = new System.Drawing.Point(348, 1111);
+            this.buttonStop.Location = new System.Drawing.Point(1393, 455);
             this.buttonStop.Name = "buttonStop";
             this.buttonStop.Size = new System.Drawing.Size(192, 52);
             this.buttonStop.TabIndex = 3;
@@ -98,7 +99,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(1538, 305);
+            this.label4.Location = new System.Drawing.Point(1157, 268);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(81, 25);
             this.label4.TabIndex = 25;
@@ -106,7 +107,7 @@
             // 
             // textBoxServer
             // 
-            this.textBoxServer.Location = new System.Drawing.Point(1666, 305);
+            this.textBoxServer.Location = new System.Drawing.Point(1285, 268);
             this.textBoxServer.Name = "textBoxServer";
             this.textBoxServer.Size = new System.Drawing.Size(312, 31);
             this.textBoxServer.TabIndex = 24;
@@ -115,7 +116,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(1538, 261);
+            this.label3.Location = new System.Drawing.Point(1157, 224);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(112, 25);
             this.label3.TabIndex = 23;
@@ -123,7 +124,7 @@
             // 
             // textBoxPassword
             // 
-            this.textBoxPassword.Location = new System.Drawing.Point(1666, 258);
+            this.textBoxPassword.Location = new System.Drawing.Point(1285, 221);
             this.textBoxPassword.Name = "textBoxPassword";
             this.textBoxPassword.PasswordChar = '*';
             this.textBoxPassword.Size = new System.Drawing.Size(312, 31);
@@ -132,7 +133,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(1538, 209);
+            this.label2.Location = new System.Drawing.Point(1157, 172);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(125, 25);
             this.label2.TabIndex = 22;
@@ -141,7 +142,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(1538, 152);
+            this.label1.Location = new System.Drawing.Point(1157, 115);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(384, 25);
             this.label1.TabIndex = 21;
@@ -149,14 +150,14 @@
             // 
             // textBoxUser
             // 
-            this.textBoxUser.Location = new System.Drawing.Point(1666, 206);
+            this.textBoxUser.Location = new System.Drawing.Point(1285, 169);
             this.textBoxUser.Name = "textBoxUser";
             this.textBoxUser.Size = new System.Drawing.Size(312, 31);
             this.textBoxUser.TabIndex = 19;
             // 
             // btnLogin
             // 
-            this.btnLogin.Location = new System.Drawing.Point(1708, 387);
+            this.btnLogin.Location = new System.Drawing.Point(1195, 329);
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.Size = new System.Drawing.Size(194, 50);
             this.btnLogin.TabIndex = 26;
@@ -196,7 +197,7 @@
             // 
             // btnReturn
             // 
-            this.btnReturn.Location = new System.Drawing.Point(773, 1111);
+            this.btnReturn.Location = new System.Drawing.Point(1147, 973);
             this.btnReturn.Name = "btnReturn";
             this.btnReturn.Size = new System.Drawing.Size(253, 52);
             this.btnReturn.TabIndex = 28;
@@ -206,17 +207,28 @@
             // 
             // lblVersion
             // 
-            this.lblVersion.Location = new System.Drawing.Point(1499, 1111);
+            this.lblVersion.Location = new System.Drawing.Point(1169, 1062);
             this.lblVersion.Name = "lblVersion";
             this.lblVersion.Size = new System.Drawing.Size(69, 25);
             this.lblVersion.TabIndex = 29;
             this.lblVersion.Text = "Version";
             // 
+            // btnClear
+            // 
+            this.btnClear.Location = new System.Drawing.Point(1147, 539);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(192, 52);
+            this.btnClear.TabIndex = 30;
+            this.btnClear.Text = "Clear List";
+            this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(2320, 1221);
+            this.ClientSize = new System.Drawing.Size(1626, 1264);
+            this.Controls.Add(this.btnClear);
             this.Controls.Add(this.lblVersion);
             this.Controls.Add(this.btnReturn);
             this.Controls.Add(this.btnLogin);
@@ -264,6 +276,7 @@
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.Button btnReturn;
         private DevExpress.XtraEditors.LabelControl lblVersion;
+        private System.Windows.Forms.Button btnClear;
     }
 }
 

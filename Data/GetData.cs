@@ -5,6 +5,7 @@ using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DevExpress.Data.Filtering.Helpers;
 using MySql.Data.MySqlClient;
 using static GatewayUpload.Common;
 
@@ -75,6 +76,34 @@ namespace GatewayUpload.Data
             cmd.Parameters.AddWithValue("_status", status);
             cmd.Parameters.AddWithValue("_timeStamp", timeStamp);
             cmd.Parameters.AddWithValue("_seq", seq);
+            if (mySqlConnection.State == ConnectionState.Closed) { mySqlConnection.Open(); }
+            cmd.ExecuteNonQuery();
+            mySqlConnection.Close();
+        }
+
+        public static void UpdateThermoValue(int seq, double value, string nodeSer, DateTime timeStamp)
+        {
+            MySqlCommand cmd = new MySqlCommand("UpdateThermoValue", mySqlConnection);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("_value", value);
+            cmd.Parameters.AddWithValue("_nodeSer", nodeSer);
+            cmd.Parameters.AddWithValue("_seq", seq);
+            cmd.Parameters.AddWithValue("_TimeStamp", timeStamp);
+            if (mySqlConnection.State == ConnectionState.Closed) { mySqlConnection.Open(); }
+            cmd.ExecuteNonQuery();
+            mySqlConnection.Close();
+        }
+
+        public static void InsertReadingBulk(string serialNo, DateTime timeStamp, double value, int iseq)
+        {
+            MySqlCommand cmd = new MySqlCommand("InsertReadingBulk", mySqlConnection);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("_value", value);
+            cmd.Parameters.AddWithValue("_SerialNo", serialNo);
+            cmd.Parameters.AddWithValue("_iseq", iseq);
+            cmd.Parameters.AddWithValue("_TimeStamp", timeStamp);
             if (mySqlConnection.State == ConnectionState.Closed) { mySqlConnection.Open(); }
             cmd.ExecuteNonQuery();
             mySqlConnection.Close();

@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DevExpress.Data.Browsing.Design;
 using GatewayUpload.Data;
 using Microsoft.Win32;
 using MySql.Data.MySqlClient;
@@ -32,7 +33,7 @@ namespace GatewayUpload
         //On server
         //private static string user = "Dale";
         //private static string server = "localhost";
-        //private static string password = "D@lelieb01"; 
+        //private static string password = "D@lelieb01";
 
         //Server from local
         //private static string user = "Dale";
@@ -43,6 +44,12 @@ namespace GatewayUpload
         private static string user = "root";
         private static string server = "localhost";
         private static string password = "D@lelieb01";
+
+        //Server from local direct
+        //private static string user = "Dale";
+        //private static string server = "192.168.1.96,3306";
+        //private static string password = "D@lelieb01";
+
 
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -55,7 +62,7 @@ namespace GatewayUpload
            
         }
 
-        private bool allowVisible;     // ContextMenu's Show command used
+        //private bool allowVisible;     // ContextMenu's Show command used
         private bool allowClose;       // ContextMenu's Exit command used
 
         //protected override void SetVisibleCore(bool value)
@@ -80,7 +87,7 @@ namespace GatewayUpload
 
         private void showToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            allowVisible = true;
+            //allowVisible = true;
             
             Show();
             WindowState = FormWindowState.Normal;
@@ -101,11 +108,12 @@ namespace GatewayUpload
            }
            else
            {
-               lblVersion.Text = string.Format("NeuraProcess - v{0}",
-                   ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString(4));
+               //lblVersion.Text = string.Format("NeuraProcess - v{0}",
+               //    ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString(4));
+               lblVersion.Text = "NeuraUpload - version 1.0.1.1";
            }
-            StartUp();
-            this.WindowState = FormWindowState.Minimized;
+           StartUp();
+           this.WindowState = FormWindowState.Minimized;
         }
         private void btnSetup_Click(object sender, EventArgs e)
         {
@@ -180,7 +188,7 @@ namespace GatewayUpload
             }
             if(result.Length<10){
                 seqMax -= 1;
-                listBox1.Items.Add("No new data found after sequence " + seqMax);
+                //listBox1.Items.Add("No new data found after sequence " + seqMax);
                 return;
             }
             
@@ -192,6 +200,7 @@ namespace GatewayUpload
             string[] strList = result.Split(sep, StringSplitOptions.None);
             string[] seq = new string[strList.Length];
             string[] key = new string[strList.Length];
+            string[] id = new string[strList.Length];
             string[] val = new string[strList.Length];
             string[] unix = new string[strList.Length];
             string[] error = new string[strList.Length]; //Added 2020/10/10
@@ -200,6 +209,7 @@ namespace GatewayUpload
             string[] milo = new string[strList.Length]; //Added 2020/10/10
             string[] mqtt = new string[strList.Length]; //Added 2020/10/10
             string[] openmuc = new string[strList.Length]; //Added 2020/10/10
+            string[] errors = new string[strList.Length]; //Added 2021/03/09
 
             int counter = 0;
             double unixDT = 0;
@@ -224,6 +234,15 @@ namespace GatewayUpload
                         key[counter] = s.Remove(0, 7);
                         key[counter] = key[counter].Remove(key[counter].Length - 1, 1);
                     }
+
+                    bool containsId = s.Contains("id");
+
+                    if (containsId == true)
+                    {
+                        id[counter] = s.Remove(0, 6);
+                        id[counter] = id[counter].Remove(id[counter].Length - 1, 1);
+                    }
+
                     bool containsVal = s.Contains("val");
                     if (containsVal == true)
                     {
@@ -251,6 +270,13 @@ namespace GatewayUpload
                     {
                         error[counter] = "error";
                     }
+
+                    bool containsErrors = s.Contains("errors");
+                    if (containsErrors == true)
+                    {
+                        errors[counter] = "errors";
+                    }
+
                     bool containsShell = s.Contains("shell");
                     if (containsShell == true)
                     {
@@ -292,9 +318,15 @@ namespace GatewayUpload
             string[] readingType=new string[counter];
             double[] value=new double[counter];
             string[] nodeSer = new string[counter];
+            string[] nodeHardware = new string[counter]; //2021/02/14 11:00
             int[] iReadingType=new int[counter];
             bool[] bValid=new bool[counter];
             string[] status = new string[counter];
+            string _node;
+            string _nodeSer = "0"; //2021/02/15 10:00
+            string _nodeHardware = "0"; //2021/02/15 10:00
+            int updates = 0;
+            int _nodeType = 0; //2021/02/15 10:00
             for (int i = 0; i < counter; i++)
             {
                 if(error[i]=="error"){goto SkipUpdate;} //2020/10/10
@@ -303,6 +335,7 @@ namespace GatewayUpload
                 if (milo[i] == "milo") { goto SkipUpdate; } //2020/10/10
                 if (mqtt[i] == "mqtt") { goto SkipUpdate; } //2020/10/10
                 if (openmuc[i] == "openmuc") { goto SkipUpdate; } //2020/10/10
+                if (errors[i] == "errors") { goto SkipUpdate; } //2021/03/09
                 iseq[i] = Convert.ToInt32(seq[i]);
                 string[] separate = { "/" };
                 string[] keySplit = key[i].Split(separate, StringSplitOptions.None);
@@ -326,44 +359,90 @@ namespace GatewayUpload
                 //filter for gateway
                 filter = "GatewaySN = '" + gateway[i] + "'";
                 dr = dtGetSerial.Select(filter);
+                _node = node[i]; //2021/02/15 10:00
                 
                 //check for metertype
                 for (int j = 0; j < dr.Length; j++)
                 {
-                    nodeSer[i] = dr[j]["nodeSN"].ToString();
-                    if (node[i] == "enode" && dr[j]["NodeType"].ToString()=="0")
+                    //nodeSer[j] = dr[j]["nodeSN"].ToString();
+                    _nodeSer = dr[j]["nodeSN"].ToString();
+                    //nodeHardware[j] = dr[j]["HardwareVer"].ToString(); //2021/02/14 11:00
+                    _nodeHardware = dr[j]["HardwareVer"].ToString();
+                    _nodeType = Convert.ToInt16(dr[j]["NodeType"]);//2021/02/14 11:00
+                    //if (node[i] == "enode" && dr[j]["NodeType"].ToString()=="0")
+
+                    try
                     {
-                        bValid[i] = true;
-                        //enode
-                        if (readingType[i] == "positive")
+                        if (_node.Substring(0, 5) == "enode" && _nodeType.ToString() == "0"
+                        && _node == _nodeHardware) //2021/02/14 11:00
+
                         {
-                            iReadingType[i] = 0;
+                            bValid[i] = true;
+                            //enode
+                            if (readingType[i] == "positive" || readingType[i] == "switch")
+                            {
+                                iReadingType[i] = 0;
+                            }
+                            else if (readingType[i] == "reverse")
+                            {
+                                iReadingType[i] = 20;
+                            }
+                            else if (readingType[i] == "power")
+                            {
+                                //power meter
+                                iReadingType[i] = -1;
+                            }
+                            else
+                            {
+                                goto SkipUpdate;
+                            }
+                            goto UpdateData;
                         }
-                        else if (readingType[i] == "reverse")
+                        //else if (node[i] == "wnode" && dr[j]["NodeType"].ToString() == "1")
+                        else if (_node.Substring(0, 5) == "wnode" && _nodeType.ToString() == "1"
+                                                                    && _node == _nodeHardware) //2021/02/14 11:00
                         {
-                            iReadingType[i] = 20;
+                            if (readingType[i] == "volume" || readingType[i] == "switch")
+                            {
+                                bValid[i] = true;
+                                //wnode
+                                iReadingType[i] = 10;
+                                value[i] = value[i] / 1000; //Added 2020/10/10
+                                goto UpdateData;
+                            }
+                            else
+                            {
+                                goto SkipUpdate;
+                            }
                         }
-                        goto UpdateData;
+                        //else if (node[i]=="gnode" && dr[j]["NodeType"].ToString() == "2")
+                        else if (_node.Substring(0, 5) == "gnode" && _nodeType.ToString() == "2"
+                                                                   && _node == _nodeHardware) //2021/02/14 11:00
+                        {
+                            //gnode
+                            if (readingType[i] == "power" || readingType[i] == "switch")
+                            {
+                                bValid[i] = true;
+                                goto UpdateData;
+                            }
+                            else
+                            {
+                                goto SkipUpdate;
+                            }
+
+                        }
+                        else
+                        {
+                            //not a node command or no match
+                            //goto NextMeterType;
+                        }
                     }
-                    else if (node[i] == "wnode" && dr[j]["NodeType"].ToString() == "1")
+                    catch (Exception)
                     {
-                        bValid[i] = true;
-                        //wnode
-                        iReadingType[i] = 10;
-                        value[i] = value[i] / 1000; //Added 2020/10/10
-                        goto UpdateData;
+                        //Hardware ver probably null
+                        goto  SkipUpdate;
                     }
-                    else if (node[i]=="gnode" && dr[j]["NodeType"].ToString() == "2")
-                    {
-                        //gnode
-                        bValid[i] = true;
-                        goto UpdateData;
-                    }
-                    else
-                    {
-                        //not a node command
-                        //goto SkipUpdate;
-                    }
+                    NextMeterType:;
                 } //for j
                 
                 UpdateData:;
@@ -383,26 +462,38 @@ namespace GatewayUpload
                     {
                         v = 0; //off/close
                     }
-                    GetData.SwitchStatusChange(nodeSer[i],timeStamp[i],v,iseq[i]);
+                    GetData.SwitchStatusChange(_nodeSer,timeStamp[i],v,iseq[i]);
                 }
                 else
                 {
                     //update thermo table table
-                    if (node[i] == "gnode" && bValid[i]==true)
+                    if (_node.Substring(0, 5) == "gnode" && bValid[i]==true)
                     {
-                        GetData.ThermoChangeStatus(nodeSer[i],timeStamp[i],value[i],iseq[i]);
+                        //GetData.ThermoChangeStatus(_nodeSer,timeStamp[i],value[i],iseq[i]);
+                        value[i] = value[i] / 1000; //Convert to kW
+                        ThermoLogic.CheckLogic(_nodeSer, timeStamp[i], value[i], iseq[i]);
 
                     }
-                    else if ((node[i] == "enode" || node[i] == "wnode") && bValid[i]==true)
+                    else if ((_node.Substring(0, 5) == "enode" ||
+                              _node.Substring(0, 5) == "wnode")
+                             && bValid[i] == true && iReadingType[i] != -1) 
                     {
                         //reading
-                        GetData.InsertReading(nodeSer[i], iReadingType[i], value[i], timeStamp[i], iseq[i]);
+                        GetData.InsertReading(_nodeSer, iReadingType[i], value[i], timeStamp[i], iseq[i]);
+                    }
+                    else if (_node.Substring(0, 5) == "enode" && iReadingType[i] == -1)
+                    {
+                        //bulk reading
+                        GetData.InsertReadingBulk(_nodeSer,timeStamp[i], value[i],iseq[i]);
                     }
                     else
                     {
                         //Not a node
                     }
+                   
                 }
+
+                updates += 1;
                 seqMax = iseq[i];
                 if (iseq[i] > seqMax)
                 {
@@ -410,7 +501,8 @@ namespace GatewayUpload
 
                 SkipUpdate:;
             }
-            listBox1.Items.Add(counter + " new values found after sequence " + seqMax);
+
+            listBox1.Items.Add(counter + " new values found after sequence " + seqMax + " " + DateTime.Now);
             Log.Info(counter + " new values found after sequence " + seqMax);
            
             //Check back
@@ -418,8 +510,8 @@ namespace GatewayUpload
             if (checkSeq == seqMax)
             {
                 //write was successful
-                listBox1.Items.Add(" Database update successful, added " + counter);
-                Log.Info(" Database update successful, added " + counter);
+                listBox1.Items.Add(" Database update successful, added " + updates);
+                Log.Info(" Database update successful, added " + updates);
             }
             else
             {
@@ -510,6 +602,7 @@ namespace GatewayUpload
         {
             if (FormWindowState.Minimized == WindowState)
                 Hide();
+            listBox1.Height = this.Height - 90;
         }
 
         private void notifyIcon1_DoubleClick(object sender, EventArgs e)
@@ -537,6 +630,11 @@ namespace GatewayUpload
             allowClose = true;
             Application.Exit();
             System.Diagnostics.Process.GetCurrentProcess().Kill();
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            listBox1.Items.Clear();
         }
         //private void InitializeBackgroundWorker()
         //{

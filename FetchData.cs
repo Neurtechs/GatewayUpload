@@ -31,6 +31,7 @@ namespace GatewayUpload
             string url = "http://34.122.10.49:8080/";
             url = url + refFrom;
             url = url + "/" + count;
+            //url = url + "/" + count + "/all";
 
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
             httpWebRequest.ContentType = "application/json";
